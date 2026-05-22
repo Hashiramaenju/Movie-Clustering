@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+INDEX_HTML = '''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -7,130 +7,246 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;color:#111;min-height:100vh;display:flex;flex-direction:column}
-.topbar{background:#4B3FBF;padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
-.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar{background:#4B3FBF;padding:16px 28px;display:flex;align-items:center;gap:14px}
 .logo-box{width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .topbar h1{color:#fff;font-size:20px;font-weight:600;margin-bottom:2px}
 .topbar p{color:rgba(255,255,255,0.6);font-size:12px}
-.topbar-right{display:flex;gap:8px;align-items:center}
-.tbadge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px 16px;color:#fff;font-size:12px}
-.tbadge b{font-size:14px}
-.refresh-btn{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 16px;color:#fff;font-size:12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px}
-.body{display:flex;flex:1;gap:0}
-.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e5e7eb;padding:20px 16px}
+.body{display:flex;flex:1;gap:0;min-height:calc(100vh - 74px)}
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e5e7eb;padding:20px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
 .sidebar h3{font-size:13px;font-weight:600;margin-bottom:16px;color:#111}
-.dist-row{margin-bottom:13px}
-.dist-label{display:flex;justify-content:space-between;font-size:12px;color:#333;margin-bottom:5px}
-.dist-pct{color:#888}
-.bar-track{height:5px;background:#f0f0f0;border-radius:999px;overflow:hidden}
+.dist-row{margin-bottom:4px}
+.dist-btn{width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:8px 10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;transition:background .15s}
+.dist-btn:hover{background:#f0f0f5}
+.dist-btn.active{background:#EEEDFE}
+.dist-name{font-size:12px;color:#333;font-weight:500}
+.dist-btn.active .dist-name{color:#3C3489}
+.dist-pct{font-size:11px;color:#888}
+.dist-btn.active .dist-pct{color:#7F77DD}
+.bar-track{height:4px;background:#f0f0f0;border-radius:999px;overflow:hidden;margin:0 10px 6px}
 .bar-fill{height:100%;border-radius:999px}
-.main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .metric{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px}
 .metric-label{font-size:11px;color:#888;margin-bottom:4px}
 .metric-val{font-size:22px;font-weight:600;color:#111}
 .cluster-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
-.cluster-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #f0f0f0}
-.cluster-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
+.cluster-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.cluster-header:hover{background:#fafafa}
+.cluster-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
 .cluster-name{font-size:13px;font-weight:600;color:#111;margin-bottom:2px}
 .cluster-meta{font-size:11px;color:#888}
+.expand-icon{margin-left:auto;font-size:18px;color:#aaa;transition:transform .2s;flex-shrink:0}
 .movies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
 .movie-tile{padding:12px;border-right:1px solid #f0f0f0}
 .movie-tile:last-child{border-right:none}
 .poster{width:100%;aspect-ratio:2/3;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:26px}
 .movie-name{font-size:11px;font-weight:600;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .movie-info{font-size:11px;color:#888}
-.open-btn{display:inline-block;margin-top:20px;background:#4B3FBF;color:#fff;font-size:14px;font-weight:600;padding:12px 32px;border-radius:10px;text-decoration:none;transition:opacity .2s}
-.open-btn:hover{opacity:.85}
-footer{padding:16px 28px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #e5e7eb;background:#fff}
+.all-movies-panel{display:none;border-top:1px solid #f0f0f0;padding:16px;max-height:420px;overflow-y:auto}
+.all-movies-panel.open{display:block}
+.all-movies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.all-movie-item{display:flex;flex-direction:column}
+.all-poster{width:100%;aspect-ratio:2/3;border-radius:8px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.all-movie-name{font-size:11px;font-weight:600;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.all-movie-info{font-size:10px;color:#888}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panel-title{font-size:13px;font-weight:600;color:#111}
+.close-btn{background:none;border:none;font-size:18px;color:#aaa;cursor:pointer;padding:0 4px}
+footer{padding:14px 28px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #e5e7eb;background:#fff}
 footer a{color:#4B3FBF;text-decoration:none}
 </style>
 </head>
 <body>
+
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-box">🎬</div>
-    <div>
-      <h1>Movie Clusters</h1>
-      <p>Grouping movies by text similarity using K-Means clustering</p>
-    </div>
-  </div>
-  <div class="topbar-right">
-    <div class="tbadge">Movies: <b>4,803</b></div>
-    <div class="tbadge">Clusters: <b>8</b></div>
-    <a class="refresh-btn" href="#">&#x21BB; Refresh</a>
+  <div class="logo-box">🎬</div>
+  <div>
+    <h1>Movie Clusters</h1>
+    <p>Grouping movies by text similarity using K-Means clustering</p>
   </div>
 </div>
 
 <div class="body">
   <div class="sidebar">
     <h3>Cluster distribution</h3>
-    <div class="dist-row"><div class="dist-label"><span>Action &amp; Adventure</span><span class="dist-pct">24%</span></div><div class="bar-track"><div class="bar-fill" style="width:24%;background:#7F77DD"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Drama &amp; Romance</span><span class="dist-pct">21%</span></div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#D4537E"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Sci-Fi &amp; Thriller</span><span class="dist-pct">17%</span></div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#378ADD"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Comedy</span><span class="dist-pct">14%</span></div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#1D9E75"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Horror &amp; Mystery</span><span class="dist-pct">11%</span></div><div class="bar-track"><div class="bar-fill" style="width:11%;background:#D85A30"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Animation &amp; Family</span><span class="dist-pct">8%</span></div><div class="bar-track"><div class="bar-fill" style="width:8%;background:#BA7517"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>Documentary</span><span class="dist-pct">3%</span></div><div class="bar-track"><div class="bar-fill" style="width:3%;background:#888780"></div></div></div>
-    <div class="dist-row"><div class="dist-label"><span>War &amp; History</span><span class="dist-pct">2%</span></div><div class="bar-track"><div class="bar-fill" style="width:2%;background:#639922"></div></div></div>
-    <div style="margin-top:24px;text-align:center">
-      <!-- UPDATE THIS HREF after deploying your Streamlit app -->
-      <a class="open-btn" href="https://your-app.streamlit.app" target="_blank">&#x1F680; Open Live App</a>
-    </div>
+    <div id="sidebar-list"></div>
   </div>
-
   <div class="main">
     <div class="metrics">
-      <div class="metric"><div class="metric-label">Total movies</div><div class="metric-val">4,803</div></div>
-      <div class="metric"><div class="metric-label">Clusters</div><div class="metric-val">8</div></div>
-      <div class="metric"><div class="metric-label">Avg rating</div><div class="metric-val">6.84</div></div>
-      <div class="metric"><div class="metric-label">Year range</div><div class="metric-val" style="font-size:16px;margin-top:4px">1916 – 2017</div></div>
+      <div class="metric"><div class="metric-label">Total movies</div><div class="metric-val" id="m-total">—</div></div>
+      <div class="metric"><div class="metric-label">Clusters</div><div class="metric-val" id="m-clusters">—</div></div>
+      <div class="metric"><div class="metric-label">Avg rating</div><div class="metric-val" id="m-rating">—</div></div>
     </div>
-
-    <div class="cluster-card">
-      <div class="cluster-header">
-        <div class="cluster-num" style="background:#EEEDFE;color:#3C3489">1152</div>
-        <div><div class="cluster-name">Action &amp; Adventure</div><div class="cluster-meta">1,152 movies &middot; avg rating 6.9 &middot; hero, fight, mission, war, battle</div></div>
-      </div>
-      <div class="movies-grid">
-        <div class="movie-tile"><div class="poster" style="background:#EEEDFE">🎬</div><div class="movie-name">The Dark Knight</div><div class="movie-info">&#11088; 8.3 &middot; 2008</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#EEEDFE">🎬</div><div class="movie-name">Avengers</div><div class="movie-info">&#11088; 7.7 &middot; 2012</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#EEEDFE">🎬</div><div class="movie-name">Mad Max: Fury Road</div><div class="movie-info">&#11088; 8.1 &middot; 2015</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#EEEDFE">🎬</div><div class="movie-name">John Wick</div><div class="movie-info">&#11088; 7.4 &middot; 2014</div></div>
-      </div>
-    </div>
-
-    <div class="cluster-card">
-      <div class="cluster-header">
-        <div class="cluster-num" style="background:#FBEAF0;color:#72243E">1008</div>
-        <div><div class="cluster-name">Drama &amp; Romance</div><div class="cluster-meta">1,008 movies &middot; avg rating 7.1 &middot; love, family, life, heart, story</div></div>
-      </div>
-      <div class="movies-grid">
-        <div class="movie-tile"><div class="poster" style="background:#FBEAF0">🎬</div><div class="movie-name">Titanic</div><div class="movie-info">&#11088; 7.2 &middot; 1997</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#FBEAF0">🎬</div><div class="movie-name">La La Land</div><div class="movie-info">&#11088; 8.0 &middot; 2016</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#FBEAF0">🎬</div><div class="movie-name">Forrest Gump</div><div class="movie-info">&#11088; 8.8 &middot; 1994</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#FBEAF0">🎬</div><div class="movie-name">The Notebook</div><div class="movie-info">&#11088; 7.3 &middot; 2004</div></div>
-      </div>
-    </div>
-
-    <div class="cluster-card">
-      <div class="cluster-header">
-        <div class="cluster-num" style="background:#E6F1FB;color:#0C447C">816</div>
-        <div><div class="cluster-name">Sci-Fi &amp; Thriller</div><div class="cluster-meta">816 movies &middot; avg rating 6.7 &middot; space, future, science, alien, time</div></div>
-      </div>
-      <div class="movies-grid">
-        <div class="movie-tile"><div class="poster" style="background:#E6F1FB">🎬</div><div class="movie-name">Interstellar</div><div class="movie-info">&#11088; 8.6 &middot; 2014</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#E6F1FB">🎬</div><div class="movie-name">The Matrix</div><div class="movie-info">&#11088; 8.7 &middot; 1999</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#E6F1FB">🎬</div><div class="movie-name">Inception</div><div class="movie-info">&#11088; 8.8 &middot; 2010</div></div>
-        <div class="movie-tile"><div class="poster" style="background:#E6F1FB">🎬</div><div class="movie-name">Arrival</div><div class="movie-info">&#11088; 7.9 &middot; 2016</div></div>
-      </div>
-    </div>
+    <div id="cluster-list"></div>
   </div>
 </div>
 
 <footer>
   Dataset: <a href="https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata" target="_blank">TMDB 5000 Movies</a>
-  &nbsp;&middot;&nbsp; Built with scikit-learn, Plotly &amp; Streamlit
+  &nbsp;&middot;&nbsp; Built with scikit-learn &amp; Plotly
 </footer>
+
+<script>
+const COLORS = [
+  {bg:"#EEEDFE",text:"#3C3489",bar:"#7F77DD",label:"Action & Adventure"},
+  {bg:"#FBEAF0",text:"#72243E",bar:"#D4537E",label:"Drama & Romance"},
+  {bg:"#E6F1FB",text:"#0C447C",bar:"#378ADD",label:"Sci-Fi & Thriller"},
+  {bg:"#E1F5EE",text:"#085041",bar:"#1D9E75",label:"Comedy"},
+  {bg:"#FAECE7",text:"#712B13",bar:"#D85A30",label:"Horror & Mystery"},
+  {bg:"#FAEEDA",text:"#633806",bar:"#BA7517",label:"Animation & Family"},
+  {bg:"#F1EFE8",text:"#444441",bar:"#888780",label:"Documentary"},
+  {bg:"#EAF3DE",text:"#27500A",bar:"#639922",label:"War & History"},
+];
+
+fetch('app_data/movies_clustered.csv')
+  .then(r => r.text())
+  .then(csv => {
+    const rows = csv.trim().split('\n');
+    const headers = rows[0].split(',');
+    const idx = h => headers.indexOf(h);
+
+    const movies = rows.slice(1).map(row => {
+      const cols = row.match(/(".*?"|[^,]+)(?=,|$)/g) || row.split(',');
+      const clean = s => (s||'').replace(/^"|"$/g,'').trim();
+      return {
+        title:   clean(cols[idx('title')]),
+        overview:clean(cols[idx('overview')]),
+        rating:  parseFloat(clean(cols[idx('vote_average')])) || 0,
+        year:    parseInt(clean(cols[idx('year')])) || 0,
+        cluster: parseInt(clean(cols[idx('cluster')])) || 0,
+        keywords:clean(cols[idx('cluster_keywords')]),
+      };
+    });
+
+    const K = Math.max(...movies.map(m => m.cluster)) + 1;
+    const groups = {};
+    for(let c=0;c<K;c++) groups[c] = movies.filter(m=>m.cluster===c).sort((a,b)=>b.rating-a.rating);
+
+    const total = movies.length;
+    const avgR  = (movies.reduce((s,m)=>s+m.rating,0)/total).toFixed(2);
+    document.getElementById('m-total').textContent    = total.toLocaleString();
+    document.getElementById('m-clusters').textContent = K;
+    document.getElementById('m-rating').textContent   = avgR;
+
+    // ── Sidebar ──────────────────────────────────────────────────────────
+    const sidebarEl = document.getElementById('sidebar-list');
+    for(let c=0;c<K;c++){
+      const col   = COLORS[c % COLORS.length];
+      const count = groups[c].length;
+      const pct   = Math.round(count/total*100);
+      const wrap  = document.createElement('div');
+      wrap.className = 'dist-row';
+      wrap.innerHTML = `
+        <button class="dist-btn" data-c="${c}" aria-label="Show cluster ${c}">
+          <span class="dist-name">${col.label}</span>
+          <span class="dist-pct">${count.toLocaleString()} (${pct}%)</span>
+        </button>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col.bar}"></div></div>`;
+      sidebarEl.appendChild(wrap);
+    }
+
+    // ── Cluster cards ─────────────────────────────────────────────────────
+    const listEl = document.getElementById('cluster-list');
+    for(let c=0;c<K;c++){
+      const col    = COLORS[c % COLORS.length];
+      const grp    = groups[c];
+      const avgGR  = (grp.reduce((s,m)=>s+m.rating,0)/grp.length).toFixed(1);
+      const kw     = grp[0]?.keywords || '';
+      const card   = document.createElement('div');
+      card.className = 'cluster-card';
+      card.id = `card-${c}`;
+
+      // preview: top 4
+      const previewHTML = grp.slice(0,4).map(m=>`
+        <div class="movie-tile">
+          <div class="poster" style="background:${col.bg}">🎬</div>
+          <div class="movie-name">${m.title}</div>
+          <div class="movie-info">⭐ ${m.rating.toFixed(1)} · ${m.year||'—'}</div>
+        </div>`).join('');
+
+      // all movies grid
+      const allHTML = grp.map(m=>`
+        <div class="all-movie-item">
+          <div class="all-poster" style="background:${col.bg}">🎬</div>
+          <div class="all-movie-name">${m.title}</div>
+          <div class="all-movie-info">⭐ ${m.rating.toFixed(1)} · ${m.year||'—'}</div>
+        </div>`).join('');
+
+      card.innerHTML = `
+        <div class="cluster-header" data-c="${c}" role="button" tabindex="0" aria-expanded="false">
+          <div class="cluster-num" style="background:${col.bg};color:${col.text}">${grp.length}</div>
+          <div>
+            <div class="cluster-name">${col.label}</div>
+            <div class="cluster-meta">${grp.length.toLocaleString()} movies · avg ${avgGR} · ${kw.split(',').slice(0,3).join(', ')}</div>
+          </div>
+          <span class="expand-icon">›</span>
+        </div>
+        <div class="movies-grid">${previewHTML}</div>
+        <div class="all-movies-panel" id="panel-${c}">
+          <div class="panel-header">
+            <span class="panel-title">All movies in ${col.label}</span>
+            <button class="close-btn" data-c="${c}" aria-label="Close panel">✕</button>
+          </div>
+          <div class="all-movies-grid">${allHTML}</div>
+        </div>`;
+      listEl.appendChild(card);
+    }
+
+    // ── Interactions ──────────────────────────────────────────────────────
+
+    // sidebar click → scroll to card + highlight
+    sidebarEl.addEventListener('click', e => {
+      const btn = e.target.closest('.dist-btn');
+      if(!btn) return;
+      const c = btn.dataset.c;
+      document.querySelectorAll('.dist-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`card-${c}`)?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+
+    // cluster header click → expand/collapse all-movies panel
+    listEl.addEventListener('click', e => {
+      const hdr = e.target.closest('.cluster-header');
+      const closeBtn = e.target.closest('.close-btn');
+
+      if(closeBtn){
+        const c = closeBtn.dataset.c;
+        document.getElementById(`panel-${c}`).classList.remove('open');
+        document.querySelector(`.cluster-header[data-c="${c}"] .expand-icon`).style.transform='rotate(0deg)';
+        document.querySelector(`.cluster-header[data-c="${c}"]`).setAttribute('aria-expanded','false');
+        return;
+      }
+
+      if(hdr){
+        const c   = hdr.dataset.c;
+        const panel = document.getElementById(`panel-${c}`);
+        const icon  = hdr.querySelector('.expand-icon');
+        const open  = panel.classList.toggle('open');
+        icon.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
+        hdr.setAttribute('aria-expanded', open);
+      }
+    });
+
+    // keyboard support for cluster headers
+    listEl.addEventListener('keydown', e => {
+      if(e.key==='Enter'||e.key===' '){
+        const hdr = e.target.closest('.cluster-header');
+        if(hdr) hdr.click();
+      }
+    });
+  })
+  .catch(err => {
+    document.getElementById('cluster-list').innerHTML =
+      `<div style="padding:20px;color:#888;font-size:13px">
+        Could not load movie data. Make sure <code>app_data/movies_clustered.csv</code>
+        is in the same repo and GitHub Pages is enabled.<br><br><small>${err}</small>
+      </div>`;
+  });
+</script>
 </body>
-</html>
+</html>'''
+
+with open('index.html', 'w') as f:
+    f.write(INDEX_HTML)
+print('index.html written ✔')
+print(f'Size: {os.path.getsize("index.html"):,} bytes')
