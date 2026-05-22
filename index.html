@@ -96,27 +96,51 @@ const COLORS = [
   {bg:"#FAEEDA",text:"#633806",bar:"#BA7517",label:"Animation & Family"},
   {bg:"#F1EFE8",text:"#444441",bar:"#888780",label:"Documentary"},
   {bg:"#EAF3DE",text:"#27500A",bar:"#639922",label:"War & History"},
+  {bg:"#EEEDFE",text:"#534AB7",bar:"#AFA9EC",label:"Cluster 8"},
+  {bg:"#FBEAF0",text:"#993556",bar:"#ED93B1",label:"Cluster 9"},
+  {bg:"#E6F1FB",text:"#185FA5",bar:"#85B7EB",label:"Cluster 10"},
+  {bg:"#E1F5EE",text:"#0F6E56",bar:"#5DCAA5",label:"Cluster 11"},
+  {bg:"#FAECE7",text:"#993C1D",bar:"#F0997B",label:"Cluster 12"},
+  {bg:"#FAEEDA",text:"#854F0B",bar:"#EF9F27",label:"Cluster 13"},
+  {bg:"#F1EFE8",text:"#5F5E5A",bar:"#B4B2A9",label:"Cluster 14"},
 ];
+
+function parseCSV(text){
+  const results = [];
+  const lines = text.trim().split('\n');
+  for(let i=0;i<lines.length;i++){
+    const row = [];
+    let cur = '', inQuote = false;
+    for(let j=0;j<lines[i].length;j++){
+      const ch = lines[i][j];
+      if(ch==='"'){ inQuote=!inQuote; }
+      else if(ch===','&&!inQuote){ row.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    row.push(cur.trim());
+    results.push(row);
+  }
+  return results;
+}
 
 fetch('app_data/movies_clustered.csv')
   .then(r => r.text())
   .then(csv => {
-    const rows = csv.trim().split('\n');
-    const headers = rows[0].split(',');
-    const idx = h => headers.indexOf(h);
+    const rows    = parseCSV(csv);
+    const headers = rows[0];
+    const idx     = h => headers.indexOf(h);
 
-    const movies = rows.slice(1).map(row => {
-      const cols = row.match(/(".*?"|[^,]+)(?=,|$)/g) || row.split(',');
-      const clean = s => (s||'').replace(/^"|"$/g,'').trim();
-      return {
-        title:   clean(cols[idx('title')]),
-        overview:clean(cols[idx('overview')]),
-        rating:  parseFloat(clean(cols[idx('vote_average')])) || 0,
-        year:    parseInt(clean(cols[idx('year')])) || 0,
-        cluster: parseInt(clean(cols[idx('cluster')])) || 0,
-        keywords:clean(cols[idx('cluster_keywords')]),
-      };
-    });
+    const movies = rows.slice(1)
+      .filter(cols => cols.length >= headers.length - 1)
+      .map(cols => ({
+        title:   (cols[idx('title')]   ||'').replace(/^"|"$/g,'').trim(),
+        overview:(cols[idx('overview')]||'').replace(/^"|"$/g,'').trim(),
+        rating:  parseFloat(cols[idx('vote_average')]) || 0,
+        year:    parseInt(cols[idx('year')])            || 0,
+        cluster: parseInt(cols[idx('cluster')])         || 0,
+        keywords:(cols[idx('cluster_keywords')]||'').replace(/^"|"$/g,'').trim(),
+      }))
+      .filter(m => !isNaN(m.cluster) && m.title);
 
     const K = Math.max(...movies.map(m => m.cluster)) + 1;
     const groups = {};
@@ -128,11 +152,10 @@ fetch('app_data/movies_clustered.csv')
     document.getElementById('m-clusters').textContent = K;
     document.getElementById('m-rating').textContent   = avgR;
 
-    // ── Sidebar ──────────────────────────────────────────────────────────
     const sidebarEl = document.getElementById('sidebar-list');
     for(let c=0;c<K;c++){
       const col   = COLORS[c % COLORS.length];
-      const count = groups[c].length;
+      const count = (groups[c]||[]).length;
       const pct   = Math.round(count/total*100);
       const wrap  = document.createElement('div');
       wrap.className = 'dist-row';
@@ -141,22 +164,21 @@ fetch('app_data/movies_clustered.csv')
           <span class="dist-name">${col.label}</span>
           <span class="dist-pct">${count.toLocaleString()} (${pct}%)</span>
         </button>
-        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col.bar}"></div></div>`;
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(pct,1)}%;background:${col.bar}"></div></div>`;
       sidebarEl.appendChild(wrap);
     }
 
-    // ── Cluster cards ─────────────────────────────────────────────────────
     const listEl = document.getElementById('cluster-list');
     for(let c=0;c<K;c++){
-      const col    = COLORS[c % COLORS.length];
-      const grp    = groups[c];
-      const avgGR  = (grp.reduce((s,m)=>s+m.rating,0)/grp.length).toFixed(1);
-      const kw     = grp[0]?.keywords || '';
-      const card   = document.createElement('div');
+      const col   = COLORS[c % COLORS.length];
+      const grp   = groups[c] || [];
+      if(grp.length === 0) continue;
+      const avgGR = (grp.reduce((s,m)=>s+m.rating,0)/grp.length).toFixed(1);
+      const kw    = (grp[0]?.keywords||'').split(',').slice(0,3).join(', ');
+      const card  = document.createElement('div');
       card.className = 'cluster-card';
       card.id = `card-${c}`;
 
-      // preview: top 4
       const previewHTML = grp.slice(0,4).map(m=>`
         <div class="movie-tile">
           <div class="poster" style="background:${col.bg}">🎬</div>
@@ -164,7 +186,6 @@ fetch('app_data/movies_clustered.csv')
           <div class="movie-info">⭐ ${m.rating.toFixed(1)} · ${m.year||'—'}</div>
         </div>`).join('');
 
-      // all movies grid
       const allHTML = grp.map(m=>`
         <div class="all-movie-item">
           <div class="all-poster" style="background:${col.bg}">🎬</div>
@@ -177,7 +198,7 @@ fetch('app_data/movies_clustered.csv')
           <div class="cluster-num" style="background:${col.bg};color:${col.text}">${grp.length}</div>
           <div>
             <div class="cluster-name">${col.label}</div>
-            <div class="cluster-meta">${grp.length.toLocaleString()} movies · avg ${avgGR} · ${kw.split(',').slice(0,3).join(', ')}</div>
+            <div class="cluster-meta">${grp.length.toLocaleString()} movies · avg ${avgGR} · ${kw}</div>
           </div>
           <span class="expand-icon">›</span>
         </div>
@@ -192,9 +213,6 @@ fetch('app_data/movies_clustered.csv')
       listEl.appendChild(card);
     }
 
-    // ── Interactions ──────────────────────────────────────────────────────
-
-    // sidebar click → scroll to card + highlight
     sidebarEl.addEventListener('click', e => {
       const btn = e.target.closest('.dist-btn');
       if(!btn) return;
@@ -204,11 +222,8 @@ fetch('app_data/movies_clustered.csv')
       document.getElementById(`card-${c}`)?.scrollIntoView({behavior:'smooth',block:'start'});
     });
 
-    // cluster header click → expand/collapse all-movies panel
     listEl.addEventListener('click', e => {
-      const hdr = e.target.closest('.cluster-header');
       const closeBtn = e.target.closest('.close-btn');
-
       if(closeBtn){
         const c = closeBtn.dataset.c;
         document.getElementById(`panel-${c}`).classList.remove('open');
@@ -216,9 +231,9 @@ fetch('app_data/movies_clustered.csv')
         document.querySelector(`.cluster-header[data-c="${c}"]`).setAttribute('aria-expanded','false');
         return;
       }
-
+      const hdr = e.target.closest('.cluster-header');
       if(hdr){
-        const c   = hdr.dataset.c;
+        const c     = hdr.dataset.c;
         const panel = document.getElementById(`panel-${c}`);
         const icon  = hdr.querySelector('.expand-icon');
         const open  = panel.classList.toggle('open');
@@ -227,7 +242,6 @@ fetch('app_data/movies_clustered.csv')
       }
     });
 
-    // keyboard support for cluster headers
     listEl.addEventListener('keydown', e => {
       if(e.key==='Enter'||e.key===' '){
         const hdr = e.target.closest('.cluster-header');
