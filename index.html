@@ -6,76 +6,113 @@
 <title>Movie Cluster Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;color:#111;min-height:100vh;display:flex;flex-direction:column}
-.topbar{background:#4B3FBF;padding:16px 28px;display:flex;align-items:center;gap:14px}
-.logo-box{width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
-.topbar h1{color:#fff;font-size:20px;font-weight:600;margin-bottom:2px}
-.topbar p{color:rgba(255,255,255,0.6);font-size:12px}
-.body{display:flex;flex:1;gap:0;min-height:calc(100vh - 74px)}
-.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e5e7eb;padding:20px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar h3{font-size:13px;font-weight:600;margin-bottom:16px;color:#111}
-.dist-row{margin-bottom:4px}
-.dist-btn{width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:8px 10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;transition:background .15s}
-.dist-btn:hover{background:#f0f0f5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f0f5;color:#111;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:linear-gradient(135deg,#4B3FBF,#7B5EA7);padding:18px 28px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 12px rgba(75,63,191,0.3)}
+.logo-box{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.topbar-text h1{color:#fff;font-size:20px;font-weight:700;margin-bottom:2px}
+.topbar-text p{color:rgba(255,255,255,0.65);font-size:12px}
+.body{display:flex;flex:1;gap:0;min-height:calc(100vh - 80px)}
+
+/* sidebar */
+.sidebar{width:260px;min-width:260px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sidebar-top{padding:18px 16px 10px;border-bottom:1px solid #f0f0f0}
+.sidebar-top h3{font-size:13px;font-weight:700;color:#111;margin-bottom:4px}
+.hint-box{background:#F5F4FF;border:1px solid #DDD9FF;border-radius:8px;padding:8px 10px;margin-top:10px;font-size:11px;color:#5547CC;line-height:1.6}
+.hint-box b{display:block;margin-bottom:2px;font-size:11px}
+.hint-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:3px}
+.hint-row:last-child{margin-bottom:0}
+.hint-icon{flex-shrink:0;font-size:12px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 16px 16px}
+.dist-row{margin-bottom:3px}
+.dist-btn{width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:8px 10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:background .15s}
+.dist-btn:hover{background:#f5f5fb}
 .dist-btn.active{background:#EEEDFE}
-.dist-name{font-size:12px;color:#333;font-weight:500}
-.dist-btn.active .dist-name{color:#3C3489}
-.dist-pct{font-size:11px;color:#888}
-.dist-btn.active .dist-pct{color:#7F77DD}
-.bar-track{height:4px;background:#f0f0f0;border-radius:999px;overflow:hidden;margin:0 10px 6px}
-.bar-fill{height:100%;border-radius:999px}
-.main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.dist-name{font-size:12px;color:#333;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dist-btn.active .dist-name{color:#3C3489;font-weight:600}
+.dist-count{font-size:11px;color:#aaa;flex-shrink:0}
+.dist-btn.active .dist-count{color:#7F77DD}
+.bar-track{height:3px;background:#f0f0f0;border-radius:999px;overflow:hidden;margin:0 10px 5px}
+.bar-fill{height:100%;border-radius:999px;transition:width .3s}
+
+/* main */
+.main{flex:1;padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.metric{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px}
-.metric-label{font-size:11px;color:#888;margin-bottom:4px}
-.metric-val{font-size:22px;font-weight:600;color:#111}
-.cluster-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
-.cluster-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.metric{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.metric-icon{font-size:22px}
+.metric-label{font-size:11px;color:#888;margin-bottom:3px}
+.metric-val{font-size:22px;font-weight:700;color:#111}
+
+/* cluster card */
+.cluster-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;transition:box-shadow .2s}
+.cluster-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.07)}
+.cluster-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #f5f5f5;cursor:pointer;transition:background .15s;user-select:none}
 .cluster-header:hover{background:#fafafa}
-.cluster-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
-.cluster-name{font-size:13px;font-weight:600;color:#111;margin-bottom:2px}
-.cluster-meta{font-size:11px;color:#888}
-.expand-icon{margin-left:auto;font-size:18px;color:#aaa;transition:transform .2s;flex-shrink:0}
-.movies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
-.movie-tile{padding:12px;border-right:1px solid #f0f0f0}
+.cluster-num{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.cluster-name{font-size:13px;font-weight:700;color:#111;margin-bottom:2px}
+.cluster-meta{font-size:11px;color:#999}
+.expand-hint{font-size:10px;color:#bbb;margin-top:2px;display:flex;align-items:center;gap:3px}
+.expand-icon{margin-left:auto;font-size:20px;color:#ccc;transition:transform .25s;flex-shrink:0;font-weight:300}
+.movies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fafafa}
+.movie-tile{padding:12px;border-right:1px solid #f0f0f0;background:#fff}
 .movie-tile:last-child{border-right:none}
-.poster{width:100%;aspect-ratio:2/3;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.poster{width:100%;aspect-ratio:2/3;border-radius:10px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px}
 .movie-name{font-size:11px;font-weight:600;color:#111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.movie-info{font-size:11px;color:#888}
-.all-movies-panel{display:none;border-top:1px solid #f0f0f0;padding:16px;max-height:420px;overflow-y:auto}
+.movie-info{font-size:10px;color:#999}
+
+/* expanded panel */
+.all-movies-panel{display:none;border-top:1px solid #f0f0f0;background:#fafafa}
 .all-movies-panel.open{display:block}
-.all-movies-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.panel-inner{padding:16px;max-height:460px;overflow-y:auto}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.panel-title{font-size:13px;font-weight:700;color:#111}
+.panel-count{font-size:11px;color:#999;margin-left:6px}
+.close-btn{background:#f0f0f5;border:none;border-radius:6px;font-size:13px;color:#888;cursor:pointer;padding:4px 10px;transition:background .15s}
+.close-btn:hover{background:#e5e5ef;color:#333}
+.all-movies-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .all-movie-item{display:flex;flex-direction:column}
-.all-poster{width:100%;aspect-ratio:2/3;border-radius:8px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:22px}
-.all-movie-name{font-size:11px;font-weight:600;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.all-movie-info{font-size:10px;color:#888}
-.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.panel-title{font-size:13px;font-weight:600;color:#111}
-.close-btn{background:none;border:none;font-size:18px;color:#aaa;cursor:pointer;padding:0 4px}
-footer{padding:14px 28px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #e5e7eb;background:#fff}
+.all-poster{width:100%;aspect-ratio:2/3;border-radius:8px;margin-bottom:5px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.all-movie-name{font-size:10px;font-weight:600;color:#111;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.all-movie-info{font-size:10px;color:#aaa}
+
+footer{padding:14px 28px;font-size:11px;color:#bbb;text-align:center;border-top:1px solid #e5e7eb;background:#fff}
 footer a{color:#4B3FBF;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#ddd;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:#bbb}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="logo-box">🎬</div>
-  <div>
-    <h1>Movie Clusters</h1>
-    <p>Grouping movies by text similarity using K-Means clustering</p>
+  <div class="topbar-text">
+    <h1>Movie Cluster Explorer</h1>
+    <p>Grouping 4,800+ movies by text similarity using K-Means &amp; TF-IDF</p>
   </div>
 </div>
 
 <div class="body">
   <div class="sidebar">
-    <h3>Cluster distribution</h3>
-    <div id="sidebar-list"></div>
+    <div class="sidebar-top">
+      <h3>📊 Cluster Distribution</h3>
+      <div class="hint-box">
+        <b>💡 How to use</b>
+        <div class="hint-row"><span class="hint-icon">👈</span><span>Click a cluster here to jump to it</span></div>
+        <div class="hint-row"><span class="hint-icon">🎬</span><span>Click a cluster title to see all its movies</span></div>
+        <div class="hint-row"><span class="hint-icon">✕</span><span>Click ✕ to collapse the movie list</span></div>
+      </div>
+    </div>
+    <div class="sidebar-scroll" id="sidebar-list"></div>
   </div>
+
   <div class="main">
     <div class="metrics">
-      <div class="metric"><div class="metric-label">Total movies</div><div class="metric-val" id="m-total">—</div></div>
-      <div class="metric"><div class="metric-label">Clusters</div><div class="metric-val" id="m-clusters">—</div></div>
-      <div class="metric"><div class="metric-label">Avg rating</div><div class="metric-val" id="m-rating">—</div></div>
+      <div class="metric"><span class="metric-icon">🎞️</span><div><div class="metric-label">Total Movies</div><div class="metric-val" id="m-total">—</div></div></div>
+      <div class="metric"><span class="metric-icon">🗂️</span><div><div class="metric-label">Clusters</div><div class="metric-val" id="m-clusters">—</div></div></div>
+      <div class="metric"><span class="metric-icon">⭐</span><div><div class="metric-label">Avg Rating</div><div class="metric-val" id="m-rating">—</div></div></div>
     </div>
     <div id="cluster-list"></div>
   </div>
@@ -83,39 +120,47 @@ footer a{color:#4B3FBF;text-decoration:none}
 
 <footer>
   Dataset: <a href="https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata" target="_blank">TMDB 5000 Movies</a>
-  &nbsp;&middot;&nbsp; Built with scikit-learn &amp; Plotly
+  &nbsp;·&nbsp; Pipeline: TF-IDF (8k terms) → TruncatedSVD/LSA → KMeans++
 </footer>
 
 <script>
-const COLORS = [
-  {bg:"#EEEDFE",text:"#3C3489",bar:"#7F77DD",label:"Action & Adventure"},
-  {bg:"#FBEAF0",text:"#72243E",bar:"#D4537E",label:"Drama & Romance"},
-  {bg:"#E6F1FB",text:"#0C447C",bar:"#378ADD",label:"Sci-Fi & Thriller"},
-  {bg:"#E1F5EE",text:"#085041",bar:"#1D9E75",label:"Comedy"},
-  {bg:"#FAECE7",text:"#712B13",bar:"#D85A30",label:"Horror & Mystery"},
-  {bg:"#FAEEDA",text:"#633806",bar:"#BA7517",label:"Animation & Family"},
-  {bg:"#F1EFE8",text:"#444441",bar:"#888780",label:"Documentary"},
-  {bg:"#EAF3DE",text:"#27500A",bar:"#639922",label:"War & History"},
-  {bg:"#EEEDFE",text:"#534AB7",bar:"#AFA9EC",label:"Cluster 8"},
-  {bg:"#FBEAF0",text:"#993556",bar:"#ED93B1",label:"Cluster 9"},
-  {bg:"#E6F1FB",text:"#185FA5",bar:"#85B7EB",label:"Cluster 10"},
-  {bg:"#E1F5EE",text:"#0F6E56",bar:"#5DCAA5",label:"Cluster 11"},
-  {bg:"#FAECE7",text:"#993C1D",bar:"#F0997B",label:"Cluster 12"},
-  {bg:"#FAEEDA",text:"#854F0B",bar:"#EF9F27",label:"Cluster 13"},
-  {bg:"#F1EFE8",text:"#5F5E5A",bar:"#B4B2A9",label:"Cluster 14"},
+const PALETTES = [
+  {bg:"#EEEDFE",text:"#3C3489",bar:"#7F77DD"},
+  {bg:"#FBEAF0",text:"#72243E",bar:"#D4537E"},
+  {bg:"#E6F1FB",text:"#0C447C",bar:"#378ADD"},
+  {bg:"#E1F5EE",text:"#085041",bar:"#1D9E75"},
+  {bg:"#FAECE7",text:"#712B13",bar:"#D85A30"},
+  {bg:"#FAEEDA",text:"#633806",bar:"#BA7517"},
+  {bg:"#F1EFE8",text:"#444441",bar:"#888780"},
+  {bg:"#EAF3DE",text:"#27500A",bar:"#639922"},
+  {bg:"#FDE8F5",text:"#6B1249",bar:"#C9499A"},
+  {bg:"#E8F4FD",text:"#0A4A6B",bar:"#2E9FD8"},
+  {bg:"#FFF3E0",text:"#7A3E00",bar:"#F4900C"},
+  {bg:"#F3E5F5",text:"#4A1060",bar:"#9C27B0"},
+  {bg:"#E0F7FA",text:"#004D56",bar:"#00ACC1"},
+  {bg:"#FCE4EC",text:"#7B1535",bar:"#E91E63"},
+  {bg:"#F9FBE7",text:"#3A4A00",bar:"#9E9D24"},
 ];
+
+// derive a readable label from top keywords
+function labelFromKeywords(kw){
+  if(!kw) return 'Mixed';
+  const words = kw.split(',').map(w=>w.trim()).filter(Boolean);
+  if(!words.length) return 'Mixed';
+  // capitalise first two words
+  return words.slice(0,2).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' & ');
+}
 
 function parseCSV(text){
   const results = [];
-  const lines = text.trim().split('\n');
+  const lines = text.trim().split('\\n');
   for(let i=0;i<lines.length;i++){
-    const row = [];
-    let cur = '', inQuote = false;
+    const row=[];let cur='',inQuote=false;
     for(let j=0;j<lines[i].length;j++){
-      const ch = lines[i][j];
-      if(ch==='"'){ inQuote=!inQuote; }
-      else if(ch===','&&!inQuote){ row.push(cur.trim()); cur=''; }
-      else { cur+=ch; }
+      const ch=lines[i][j];
+      if(ch==='"'){inQuote=!inQuote;}
+      else if(ch===','&&!inQuote){row.push(cur.trim());cur='';}
+      else{cur+=ch;}
     }
     row.push(cur.trim());
     results.push(row);
@@ -124,136 +169,155 @@ function parseCSV(text){
 }
 
 fetch('app_data/movies_clustered.csv')
-  .then(r => r.text())
-  .then(csv => {
+  .then(r=>r.text())
+  .then(csv=>{
     const rows    = parseCSV(csv);
     const headers = rows[0];
-    const idx     = h => headers.indexOf(h);
+    const idx     = h=>headers.indexOf(h);
 
     const movies = rows.slice(1)
-      .filter(cols => cols.length >= headers.length - 1)
-      .map(cols => ({
+      .filter(cols=>cols.length>=headers.length-1)
+      .map(cols=>({
         title:   (cols[idx('title')]   ||'').replace(/^"|"$/g,'').trim(),
-        overview:(cols[idx('overview')]||'').replace(/^"|"$/g,'').trim(),
-        rating:  parseFloat(cols[idx('vote_average')]) || 0,
-        year:    parseInt(cols[idx('year')])            || 0,
-        cluster: parseInt(cols[idx('cluster')])         || 0,
+        rating:  parseFloat(cols[idx('vote_average')])||0,
+        year:    parseInt(cols[idx('year')])||0,
+        cluster: parseInt(cols[idx('cluster')]),
         keywords:(cols[idx('cluster_keywords')]||'').replace(/^"|"$/g,'').trim(),
       }))
-      .filter(m => !isNaN(m.cluster) && m.title);
+      .filter(m=>!isNaN(m.cluster)&&m.title);
 
-    const K = Math.max(...movies.map(m => m.cluster)) + 1;
-    const groups = {};
-    for(let c=0;c<K;c++) groups[c] = movies.filter(m=>m.cluster===c).sort((a,b)=>b.rating-a.rating);
+    const K = Math.max(...movies.map(m=>m.cluster))+1;
+    const groups={};
+    for(let c=0;c<K;c++) groups[c]=movies.filter(m=>m.cluster===c).sort((a,b)=>b.rating-a.rating);
 
-    const total = movies.length;
-    const avgR  = (movies.reduce((s,m)=>s+m.rating,0)/total).toFixed(2);
-    document.getElementById('m-total').textContent    = total.toLocaleString();
-    document.getElementById('m-clusters').textContent = K;
-    document.getElementById('m-rating').textContent   = avgR;
-
-    const sidebarEl = document.getElementById('sidebar-list');
+    // build label from most common keywords in each cluster
+    const clusterLabels={};
     for(let c=0;c<K;c++){
-      const col   = COLORS[c % COLORS.length];
-      const count = (groups[c]||[]).length;
-      const pct   = Math.round(count/total*100);
-      const wrap  = document.createElement('div');
-      wrap.className = 'dist-row';
-      wrap.innerHTML = `
-        <button class="dist-btn" data-c="${c}" aria-label="Show cluster ${c}">
-          <span class="dist-name">${col.label}</span>
-          <span class="dist-pct">${count.toLocaleString()} (${pct}%)</span>
+      const grp=groups[c]||[];
+      const kw=grp.length ? grp[0].keywords : '';
+      clusterLabels[c]=labelFromKeywords(kw);
+    }
+
+    const total=movies.length;
+    const avgR=(movies.reduce((s,m)=>s+m.rating,0)/total).toFixed(2);
+    document.getElementById('m-total').textContent   =total.toLocaleString();
+    document.getElementById('m-clusters').textContent=K;
+    document.getElementById('m-rating').textContent  =avgR;
+
+    // ── Sidebar ────────────────────────────────────────────────────────
+    const sidebarEl=document.getElementById('sidebar-list');
+    for(let c=0;c<K;c++){
+      const pal  =PALETTES[c%PALETTES.length];
+      const grp  =groups[c]||[];
+      const count=grp.length;
+      if(!count) continue;
+      const pct  =Math.round(count/total*100);
+      const label=clusterLabels[c];
+      const wrap =document.createElement('div');
+      wrap.className='dist-row';
+      wrap.innerHTML=`
+        <button class="dist-btn" data-c="${c}" title="Jump to ${label}">
+          <span class="dist-name">${label}</span>
+          <span class="dist-count">${count.toLocaleString()} (${pct}%)</span>
         </button>
-        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(pct,1)}%;background:${col.bar}"></div></div>`;
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(pct,1)}%;background:${pal.bar}"></div></div>`;
       sidebarEl.appendChild(wrap);
     }
 
-    const listEl = document.getElementById('cluster-list');
+    // ── Cluster cards ──────────────────────────────────────────────────
+    const listEl=document.getElementById('cluster-list');
     for(let c=0;c<K;c++){
-      const col   = COLORS[c % COLORS.length];
-      const grp   = groups[c] || [];
-      if(grp.length === 0) continue;
-      const avgGR = (grp.reduce((s,m)=>s+m.rating,0)/grp.length).toFixed(1);
-      const kw    = (grp[0]?.keywords||'').split(',').slice(0,3).join(', ');
-      const card  = document.createElement('div');
-      card.className = 'cluster-card';
-      card.id = `card-${c}`;
+      const pal  =PALETTES[c%PALETTES.length];
+      const grp  =groups[c]||[];
+      if(!grp.length) continue;
+      const label=clusterLabels[c];
+      const avgGR=(grp.reduce((s,m)=>s+m.rating,0)/grp.length).toFixed(1);
+      const kw   =grp[0]?.keywords.split(',').slice(0,4).join(', ')||'';
 
-      const previewHTML = grp.slice(0,4).map(m=>`
+      const previewHTML=grp.slice(0,4).map(m=>`
         <div class="movie-tile">
-          <div class="poster" style="background:${col.bg}">🎬</div>
-          <div class="movie-name">${m.title}</div>
+          <div class="poster" style="background:${pal.bg}">🎬</div>
+          <div class="movie-name" title="${m.title}">${m.title}</div>
           <div class="movie-info">⭐ ${m.rating.toFixed(1)} · ${m.year||'—'}</div>
         </div>`).join('');
 
-      const allHTML = grp.map(m=>`
+      const allHTML=grp.map(m=>`
         <div class="all-movie-item">
-          <div class="all-poster" style="background:${col.bg}">🎬</div>
-          <div class="all-movie-name">${m.title}</div>
+          <div class="all-poster" style="background:${pal.bg}">🎬</div>
+          <div class="all-movie-name" title="${m.title}">${m.title}</div>
           <div class="all-movie-info">⭐ ${m.rating.toFixed(1)} · ${m.year||'—'}</div>
         </div>`).join('');
 
-      card.innerHTML = `
+      const card=document.createElement('div');
+      card.className='cluster-card';
+      card.id=`card-${c}`;
+      card.innerHTML=`
         <div class="cluster-header" data-c="${c}" role="button" tabindex="0" aria-expanded="false">
-          <div class="cluster-num" style="background:${col.bg};color:${col.text}">${grp.length}</div>
-          <div>
-            <div class="cluster-name">${col.label}</div>
-            <div class="cluster-meta">${grp.length.toLocaleString()} movies · avg ${avgGR} · ${kw}</div>
+          <div class="cluster-num" style="background:${pal.bg};color:${pal.text}">${grp.length}</div>
+          <div style="min-width:0;flex:1">
+            <div class="cluster-name">${label}</div>
+            <div class="cluster-meta">${grp.length.toLocaleString()} movies · avg ⭐ ${avgGR} · ${kw}</div>
+            <div class="expand-hint">🎬 Click to see all movies</div>
           </div>
           <span class="expand-icon">›</span>
         </div>
         <div class="movies-grid">${previewHTML}</div>
         <div class="all-movies-panel" id="panel-${c}">
-          <div class="panel-header">
-            <span class="panel-title">All movies in ${col.label}</span>
-            <button class="close-btn" data-c="${c}" aria-label="Close panel">✕</button>
+          <div class="panel-inner">
+            <div class="panel-header">
+              <div><span class="panel-title">All movies in ${label}</span><span class="panel-count">${grp.length} total</span></div>
+              <button class="close-btn" data-c="${c}">✕ Close</button>
+            </div>
+            <div class="all-movies-grid">${allHTML}</div>
           </div>
-          <div class="all-movies-grid">${allHTML}</div>
         </div>`;
       listEl.appendChild(card);
     }
 
-    sidebarEl.addEventListener('click', e => {
-      const btn = e.target.closest('.dist-btn');
+    // ── Sidebar click → scroll ─────────────────────────────────────────
+    sidebarEl.addEventListener('click',e=>{
+      const btn=e.target.closest('.dist-btn');
       if(!btn) return;
-      const c = btn.dataset.c;
+      const c=btn.dataset.c;
       document.querySelectorAll('.dist-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(`card-${c}`)?.scrollIntoView({behavior:'smooth',block:'start'});
     });
 
-    listEl.addEventListener('click', e => {
-      const closeBtn = e.target.closest('.close-btn');
+    // ── Cluster header click → expand/collapse ─────────────────────────
+    listEl.addEventListener('click',e=>{
+      const closeBtn=e.target.closest('.close-btn');
       if(closeBtn){
-        const c = closeBtn.dataset.c;
+        const c=closeBtn.dataset.c;
         document.getElementById(`panel-${c}`).classList.remove('open');
         document.querySelector(`.cluster-header[data-c="${c}"] .expand-icon`).style.transform='rotate(0deg)';
         document.querySelector(`.cluster-header[data-c="${c}"]`).setAttribute('aria-expanded','false');
         return;
       }
-      const hdr = e.target.closest('.cluster-header');
+      const hdr=e.target.closest('.cluster-header');
       if(hdr){
-        const c     = hdr.dataset.c;
-        const panel = document.getElementById(`panel-${c}`);
-        const icon  = hdr.querySelector('.expand-icon');
-        const open  = panel.classList.toggle('open');
-        icon.style.transform = open ? 'rotate(90deg)' : 'rotate(0deg)';
-        hdr.setAttribute('aria-expanded', open);
+        const c    =hdr.dataset.c;
+        const panel=document.getElementById(`panel-${c}`);
+        const icon =hdr.querySelector('.expand-icon');
+        const open =panel.classList.toggle('open');
+        icon.style.transform=open?'rotate(90deg)':'rotate(0deg)';
+        hdr.setAttribute('aria-expanded',open);
       }
     });
 
-    listEl.addEventListener('keydown', e => {
+    listEl.addEventListener('keydown',e=>{
       if(e.key==='Enter'||e.key===' '){
-        const hdr = e.target.closest('.cluster-header');
+        const hdr=e.target.closest('.cluster-header');
         if(hdr) hdr.click();
       }
     });
   })
-  .catch(err => {
-    document.getElementById('cluster-list').innerHTML =
-      `<div style="padding:20px;color:#888;font-size:13px">
-        Could not load movie data. Make sure <code>app_data/movies_clustered.csv</code>
-        is in the same repo and GitHub Pages is enabled.<br><br><small>${err}</small>
+  .catch(err=>{
+    document.getElementById('cluster-list').innerHTML=
+      `<div style="padding:24px;color:#888;font-size:13px;background:#fff;border-radius:14px;border:1px solid #e5e7eb">
+        ⚠️ Could not load movie data.<br><br>
+        Make sure <code>app_data/movies_clustered.csv</code> is in the same repo and GitHub Pages is enabled.
+        <br><br><small style="color:#ccc">${err}</small>
       </div>`;
   });
 </script>
